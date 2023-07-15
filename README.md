@@ -1,8 +1,8 @@
-# FT Regex Engine
-Flaming Tomatoes' regular expressions engine
+# TS Regex Engine
+## Tomato Stack's regular expressions engine
 
-<img src="Extras/Tommy.png">
-
-<img src="Extras/Flaming_Tomatoes.png">
-
+<p align="center">
+    <img src="Extras/Tommy2.2.svg"> <br>
+    <img src="Extras/TomatoStack.png">
+</p>
 
