@@ -1,0 +1,15 @@
+----- Automata Finito No Determinista -----
+0	(1,a)	
+1	(0,$)	(2,$)	
+2	(4,$)	
+3	(0,$)	
+4	
+
+
+
+----- Automata Finito Determinista -----
+A	(B,a)	
+B	(B,a)	
+
+Nodos de aceptación
+B 

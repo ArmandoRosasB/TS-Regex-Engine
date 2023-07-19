@@ -213,8 +213,10 @@ int main(int argc, char* argv[]){
     // Creamos un grafo con costo para representar el Automata Finito Determinista
     WGraph<char, char>* AFD = new WGraph<char, char>(true);
     char nuevo_nodo = 'A';
+    int objetivo = nodo;
     
     queue<char> xVisitar;
+    set<char> nodos_aceptacion;
     map<char, set<int>> equivalencias;
     set<int>::iterator itrEq;
 
@@ -222,6 +224,10 @@ int main(int argc, char* argv[]){
     equivalencias.insert(pair<char, set<int>>(nuevo_nodo, bfs(nodo-1, EPSILON, AFN)));        
     xVisitar.push(nuevo_nodo);
     nuevo_nodo++;
+
+    if(equivalencias['A'].find(objetivo) != equivalencias['A'].end()){
+        nodos_aceptacion.insert('A');
+    }
     
     while (!xVisitar.empty()){
         char nodo_actual = xVisitar.front();
@@ -244,6 +250,7 @@ int main(int argc, char* argv[]){
             if(bandera == '-') {
                 equivalencias.insert(pair<char, set<int>>(nuevo_nodo, alcance_cerradura));
                 xVisitar.push(nuevo_nodo);
+                bandera = nuevo_nodo;
 
                 AFD->addEdge(nodo_actual, nuevo_nodo, alfabeto[i]);
                 nuevo_nodo++;
@@ -252,14 +259,20 @@ int main(int argc, char* argv[]){
                 AFD->addEdge(nodo_actual, bandera, alfabeto[i]);
             }
 
+            if(alcance_cerradura.find(objetivo) != alcance_cerradura.end()){
+                nodos_aceptacion.insert(bandera);
+            }
         }   
     }
     
     salida << "----- Automata Finito Determinista -----" << endl;
     salida << AFD->toString();
 
-
-    
+    salida << "Nodos de aceptación" << endl;
+    for(auto nodo_aceptado: nodos_aceptacion){
+        salida << nodo_aceptado << " ";
+    }
+    salida << endl;
 
     entrada.close();
     salida.close();
