@@ -7,149 +7,162 @@
 
 using namespace std;
 
-pair<int, int> exclamacion_unificado(-1, -1); //!comedia
-pair<int, int> bloqueado(-1, -1);
-int nodo = 0;
-char epsilon = '$';
-set<int> eClosure(set<int>&, WGraph<int, char>*&);
-char search(set<int>&, map<char, set<int>>&);
+typedef pair<int, int> automata;
+
+char EPSILON = '$';
+automata ultimo_automata (-1, -1);
+automata automata_bloqueado(-1, -1);
+
+// Prototipos
+set<int> cerradura(set<int>&, WGraph<int, char>*&);
+char buscar_equivalencia(set<int>&, map<char, set<int>>&);
 
 int main(int argc, char* argv[]){
-    ifstream inputFile;
-    ofstream outputFile;
+    ifstream entrada;
+    ofstream salida;
 
     if (argc != 3) {
-        cout << "usage: " << argv[0] << "input_file output_file \n";
+        cout << "Uso: " << argv[0] << "./app archivo_entrada archivo_salida \n";
         return -1;
     }
-    inputFile.open(argv[1]);
 
-    if (!inputFile.is_open()) {
-        cout << argv[0] << ": File \"" << argv[1] << "\" not found\n";
+    entrada.open(argv[1]);
+
+    if (!entrada.is_open()) {
+        cout << argv[0] << ": Archivo \"" << argv[1] << "\" no encontrado\n";
         return -1;
     }
-    outputFile.open(argv[2]);
 
-    string a, b;
-    inputFile >> a >> b;
+    salida.open(argv[2]);
 
+    string alfabeto, regex;
+    entrada >> alfabeto >> regex;
+
+    // Creamos un grafo con costo para representar el Automata Finito No Determinista
     WGraph<int, char>* AFN = new WGraph<int, char>(true);
 
+    int nodo = 0;
     stack<char> operadores;
-    stack<pair<int, int> > operandos;
-    
-    for(int i = 0; i < b.size(); i++){
-        if (b[i] == '(') {
-            operadores.push(b[i]);
+    stack<automata> operandos;
 
-        } else if (b[i] == '*' || b[i] == '?' || b[i] == '+') {
-            pair<int, int> top = operandos.top();
+
+
+    // ------------------------------- Autómata Finito No Determinista -------------------------------
+    
+    for(int i = 0; i < regex.size(); i++){
+        
+        if (regex[i] == '(') {
+            operadores.push(regex[i]);
+
+        } else if (regex[i] == '*' || regex[i] == '?' || regex[i] == '+') {
+            automata top = operandos.top();
             operandos.pop();
 
             // Agregamos un nodo de aceptación
-            AFN->addEdge(top.second, nodo, epsilon);
+            AFN->addEdge(top.second, nodo, EPSILON);
 
-            if (exclamacion_unificado == pair<int, int>(-1, -1)) {
-
-                if (b[i] == '*'){
-                    // Conectamos el 1er nodo con el nuevo (0 veces)
-                    AFN->addEdge(top.first, nodo, epsilon);
+            if (ultimo_automata == automata(-1, -1)) {
+                if (regex[i] == '*'){
+                    // Conectamos el 1er nodo con el nuevo nodo (0 veces)
+                    AFN->addEdge(top.first, nodo, EPSILON);
 
                     //Conectamos el último nodo con el primero (1...* veces)
-                    AFN->addEdge(top.second, top.first, epsilon);
+                    AFN->addEdge(top.second, top.first, EPSILON);
 
-                } else if (b[i] == '?'){
-                    // Conectamos el 1er nodo con el nuevo (0 veces)
-                    AFN->addEdge(top.first, nodo, epsilon);
+                } 
+                else if (regex[i] == '?'){
+                    // Conectamos el 1er nodo con el nuevo nodo (0 veces)
+                    AFN->addEdge(top.first, nodo, EPSILON);
 
-                } else if (b[i] == '+'){
+                } 
+                else if (regex[i] == '+'){
                     //Conectamos el último nodo con el primero (1...* veces)
-                    AFN->addEdge(top.second, top.first, epsilon);
+                    AFN->addEdge(top.second, top.first, EPSILON);
 
                 }
-                 
             } else {
-                if (b[i] == '*'){
-                    // Conectamos el 1er nodo !unificado con el nuevo (0 veces)
-                    AFN->addEdge(exclamacion_unificado.first, nodo, epsilon);
+                if (regex[i] == '*'){
+                    // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
+                    AFN->addEdge(ultimo_automata.first, nodo, EPSILON);
 
-                    // Conectamos el último nodo !unificado con el 1er no !unificado (1...* veces)
-                    AFN->addEdge(exclamacion_unificado.second, exclamacion_unificado.first, epsilon);
-                } else if (b[i] == '?'){
-                    // Conectamos el 1er nodo !unificado con el nuevo (0 veces)
-                    AFN->addEdge(exclamacion_unificado.first, nodo, epsilon);
-
-                } else if (b[i] == '+'){
-                    // Conectamos el último nodo !unificado con el 1er no !unificado (1...* veces)
-                    AFN->addEdge(exclamacion_unificado.second, exclamacion_unificado.first, epsilon);
-
+                    // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
+                    AFN->addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
                 }
-
-                exclamacion_unificado = pair<int, int>(-1, -1);
+                else if (regex[i] == '?'){
+                    // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
+                    AFN->addEdge(ultimo_automata.first, nodo, EPSILON);
+                } 
+                else if (regex[i] == '+'){
+                    // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
+                    AFN->addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
+                }
+                ultimo_automata = automata(-1, -1);
             }
 
-            operandos.push(pair<int, int>(top.first, nodo));
+            operandos.push(automata(top.first, nodo));
             nodo++;
-
-        } else if (b[i] == '|') {
+            
+        } else if (regex[i] == '|') {
             operadores.push('|');
             
             // Bloqueamos último autómata en operandos
-            bloqueado = operandos.top();
+            automata_bloqueado = operandos.top();
         
-        } else if (b[i] == ')') {
+        } else if (regex[i] == ')') {
             while(operadores.top() != '(') {
-                operadores.pop();
-                int origin, destiny;
 
-                pair<int,int> second = operandos.top();
+                operadores.pop();
+                int origen, destino;
+
+                automata segundo_automata = operandos.top();
                 operandos.pop();
 
-                pair<int,int> first = operandos.top();
+                automata primer_automata = operandos.top();
                 operandos.pop();
 
                 // Agregamos nodo origen
-                origin = nodo;
-                AFN->addEdge(origin, first.first, epsilon);
-                AFN->addEdge(origin, second.first, epsilon);
+                origen = nodo;
+                AFN->addEdge(origen, primer_automata.first, EPSILON);
+                AFN->addEdge(origen, segundo_automata.first, EPSILON);
                 nodo++;
 
                 // Agregamos nodo final
-                AFN->addEdge(second.second, nodo, epsilon);
-                AFN->addEdge(first.second, nodo, epsilon);
+                AFN->addEdge(segundo_automata.second, nodo, EPSILON);
+                AFN->addEdge(primer_automata.second, nodo, EPSILON);
 
                 // Agregamos nodo de aceptación
-                destiny = nodo + 1;
-                AFN->addEdge(nodo, destiny, epsilon);
+                destino = nodo + 1;
+                AFN->addEdge(nodo, destino, EPSILON);
                 nodo += 2;
 
                 // Agregamos a la pila de operandos el nuevo autómata
-                operandos.push(pair<int, int>(origin, destiny));
+                operandos.push(automata(origen, destino));
             }
 
             operadores.pop();
-            exclamacion_unificado = pair<int, int>(-1, -1);
-            bloqueado = pair<int, int>(-1, -1);
+            ultimo_automata = automata(-1, -1);
+            automata_bloqueado = automata(-1, -1);
             
-        } else { // Caracter
-            // Creamos el autómata
-            AFN->addEdge(nodo, nodo+1, b[i]); // nodo -- b[i] --> nodo+1
-            // Indicamos que no está unificado
-            exclamacion_unificado = pair<int, int>(nodo, nodo+1);
+        } else { // Caracter del alfabeto
+            // Creamos su autómata
+            AFN->addEdge(nodo, nodo+1, regex[i]); 
+
+            // Indicamos que es el ultimo automata
+            ultimo_automata = automata(nodo, nodo+1);
             
             // Verificar si podemos concatenar autómatas
-            if (!operandos.empty() && operandos.top() != bloqueado) {
-                pair<int, int> top = operandos.top();
+            if (!operandos.empty() && operandos.top() != automata_bloqueado) {
+                automata top = operandos.top();
                 operandos.pop();
 
-                // top (operandos) -- b[i] --> nuevoAutómata (!unificado)
-                AFN->addEdge(top.second, exclamacion_unificado.second, b[i]);
-                AFN->deleteFrom(exclamacion_unificado.first);
+                AFN->addEdge(top.second, ultimo_automata.second, regex[i]);
+                AFN->deleteFrom(ultimo_automata.first);
 
-                operandos.push(pair<int, int>(top.first, exclamacion_unificado.second)); 
-                exclamacion_unificado.first = top.second; // exclamacion_unificado.first--;
+                operandos.push(automata(top.first, ultimo_automata.second)); 
+                ultimo_automata.first = top.second; 
+
             } else {
-                operandos.push(pair<int, int>(nodo, nodo + 1));
+                operandos.push(automata(nodo, nodo + 1));
             } 
 
             nodo += 2;           
@@ -158,128 +171,115 @@ int main(int argc, char* argv[]){
 
     while(!operadores.empty()) {
         operadores.pop();
-        int origin, destiny;
+        int origen, destino;
 
-        pair<int,int> second = operandos.top();
+        automata segundo_automata = operandos.top();
         operandos.pop();
 
-        pair<int,int> first = operandos.top();
+        automata primer_automata = operandos.top();
         operandos.pop();
 
         // Agregamos nodo origen
-        origin = nodo;
-        AFN->addEdge(origin, first.first, epsilon);
-        AFN->addEdge(origin, second.first, epsilon);
+        origen = nodo;
+        AFN->addEdge(origen, primer_automata.first, EPSILON);
+        AFN->addEdge(origen, segundo_automata.first, EPSILON);
         nodo++;
 
         // Agregamos nodo final
-        AFN->addEdge(second.second, nodo, epsilon);
-        AFN->addEdge(first.second, nodo, epsilon);
+        AFN->addEdge(segundo_automata.second, nodo, EPSILON);
+        AFN->addEdge(primer_automata.second, nodo, EPSILON);
 
         // Agregamos nodo de aceptación
-        destiny = nodo + 1;
-        AFN->addEdge(nodo, destiny, epsilon);
+        destino = nodo + 1;
+        AFN->addEdge(nodo, destino, EPSILON);
         nodo += 2;
 
         // Agregamos a la pila de operandos el nuevo autómata
-        operandos.push(pair<int, int>(origin, destiny));
+        operandos.push(automata(origen, destino));
     }
 
-    exclamacion_unificado = pair<int, int>(-1, -1);
-    bloqueado = pair<int, int>(-1, -1);
-    AFN->addEdge(nodo, operandos.top().first, epsilon);
+    ultimo_automata = automata(-1, -1);
+    automata_bloqueado = automata(-1, -1);
+    AFN->addEdge(nodo, operandos.top().first, EPSILON);
     nodo++;
-    AFN->addEdge(operandos.top().second, nodo, epsilon);
+    AFN->addEdge(operandos.top().second, nodo, EPSILON);
     
-    outputFile << "AFN" << endl;
-    outputFile << AFN->toString() << endl << endl;
+    salida << "----- Automata Finito No Determinista -----" << endl;
+    salida << AFN->toString() << endl << endl;
 
 
-    // ------------------------------- Autómata determinista -------------------------------
-    
+    // ------------------------------- Autómata Finito Determinista -------------------------------
+
+    // Creamos un grafo con costo para representar el Automata Finito Determinista
     WGraph<char, char>* AFD = new WGraph<char, char>(true);
     char nuevo_nodo = 'A';
-    queue<char> xVisit;
-    map<char, set<int>> eq;
+    
+    queue<char> xVisitar;
+    map<char, set<int>> equivalencias;
     set<int>::iterator itrEq;
 
-    // 1er e-closure
-    eq.insert(pair<char, set<int>>(nuevo_nodo, bfs(nodo-1, epsilon, AFN)));        
-    xVisit.push(nuevo_nodo);
+    // 1era cerradura
+    equivalencias.insert(pair<char, set<int>>(nuevo_nodo, bfs(nodo-1, EPSILON, AFN)));        
+    xVisitar.push(nuevo_nodo);
     nuevo_nodo++;
-    int t = 3;
-    while (!xVisit.empty()){
-        char curr_node = xVisit.front();
-        xVisit.pop();
+    
+    while (!xVisitar.empty()){
+        char nodo_actual = xVisitar.front();
+        xVisitar.pop();
         
-        for(int i = 0; i < a.size(); i++) { // Iteramos sobre el alfabeto
-            if (a[i] == epsilon) continue;
-            set<int> ans;
+        for(int i = 0; i < alfabeto.size(); i++) { // Iteramos sobre el alfabeto
+            if (alfabeto[i] == EPSILON) continue;
+
+            set<int> alcance;
             
-            for(itrEq = eq[curr_node].begin(); itrEq != eq[curr_node].end(); itrEq++) {
-                set<int> helper = bfs(*itrEq, a[i], AFN);
-                ans.merge(helper);
+            for(itrEq = equivalencias[nodo_actual].begin(); itrEq != equivalencias[nodo_actual].end(); itrEq++) {
+                set<int> ayudante = bfs(*itrEq, alfabeto[i], AFN);
+                alcance.merge(ayudante);
             }
 
-            cout << curr_node << " " << a[i] << ": ";
-            itrEq = ans.begin();
-            while (itrEq != ans.end()){
-               cout << *itrEq << " ";
-                itrEq++;
-            }
-            cout << endl;
 
-            set<int> cerradura = eClosure(ans, AFN);
-            cout << "Cerradura: ";
-            itrEq = cerradura.begin();
-            while (itrEq != cerradura.end()){
-                cout << *itrEq << " ";
-                itrEq++;
-            }
-            cout << endl;
+            set<int> alcance_cerradura = cerradura(alcance, AFN);
+            char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);
 
+            if(bandera == '-') {
+                equivalencias.insert(pair<char, set<int>>(nuevo_nodo, alcance_cerradura));
+                xVisitar.push(nuevo_nodo);
 
-            char exists = search(cerradura, eq);
-            cout << "curr node = " << curr_node;
-            cout << "exist: " << exists;
-            cout << "a[i] = " << a[i];
-            if(exists == '-') {
-                eq.insert(pair<char, set<int>>(nuevo_nodo, cerradura));
-                xVisit.push(nuevo_nodo);
-
-                AFD->addEdge(curr_node, nuevo_nodo, a[i]);
-                cout << "No existe, nuevo nodo = " << nuevo_nodo;
+                AFD->addEdge(nodo_actual, nuevo_nodo, alfabeto[i]);
                 nuevo_nodo++;
                 
             } else {
-                AFD->addEdge(curr_node, exists, a[i]);
+                AFD->addEdge(nodo_actual, bandera, alfabeto[i]);
             }
 
-            cout <<endl;
         }   
     }
-    outputFile << "AFD" << endl;
-    outputFile << AFD->toString();
+    
+    salida << "----- Automata Finito Determinista -----" << endl;
+    salida << AFD->toString();
 
-    inputFile.close();
-    outputFile.close();
+
+    
+
+    entrada.close();
+    salida.close();
 
     return 0;
 }
 
-set<int> eClosure(set<int>& check, WGraph<int, char>*& AFN) {
+set<int> cerradura(set<int>& check, WGraph<int, char>*& AFN) {
     set<int>::iterator itr;
-    set<int> ans;
+    set<int> alcance;
 
     for(itr = check.begin(); itr != check.end(); itr++) {
-        set<int> helper = bfs(*itr, epsilon, AFN);
-        ans.merge(helper);
+        set<int> ayudante = bfs(*itr, EPSILON, AFN);
+        alcance.merge(ayudante);
     }
 
-    return ans;
+    return alcance;
 }
 
-char search(set<int>& check, map<char, set<int>>& aux) { 
+char buscar_equivalencia(set<int>& check, map<char, set<int>>& aux) { 
     map<char, set<int>>::iterator itr;
     itr = aux.begin();
     while(itr != aux.end()) {
@@ -289,5 +289,4 @@ char search(set<int>& check, map<char, set<int>>& aux) {
     }
 
     return '-';
-
 }
