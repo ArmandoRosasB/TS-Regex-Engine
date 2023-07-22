@@ -1,5 +1,6 @@
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MultiMap <Key, Value> {
     
@@ -60,4 +61,14 @@ public class MultiMap <Key, Value> {
             }
         }
     }
+
+
+    public final String toStringValues(Key key) {
+        String result = Arrays.asList(mymap.get(key)).stream()
+                               .map(n -> String.valueOf(n))
+                                .collect(Collectors.joining(", ", "[ ", " ]"));
+
+        return result;
+    }
+
 } 
