@@ -1,6 +1,5 @@
 
 import java.util.HashSet;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -10,6 +9,8 @@ public class Wgraph <Vertex, Edge> {
     private HashMap<Vertex, MultiMap<Vertex, Edge>> edges;
 
     Wgraph(boolean direction) {
+        vertexes = new HashSet<Vertex>();
+        edges = new HashMap<Vertex, MultiMap<Vertex, Edge>>();
         this.direction = direction;
     }
 
@@ -57,13 +58,12 @@ public class Wgraph <Vertex, Edge> {
     public final String toString() {
         StringBuilder sb = new StringBuilder();
         Iterator<Vertex> i = vertexes.iterator();
-        Iterator<MultiMap<Vertex, Edge>> j;
 
         while (i.hasNext()){
             Vertex aux = i.next();
             sb.append(aux).append('\t');
-            
-            sb.append(edges.get(aux).toStringValues(aux));
+            sb.append(edges.get(aux).toStringValues());
+            sb.append(System.lineSeparator());
         }
 
         return sb.toString();

@@ -1,6 +1,5 @@
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MultiMap <Key, Value> {
     
@@ -14,7 +13,7 @@ public class MultiMap <Key, Value> {
         if (mymap.get(key) == null) {
             mymap.put(key, new ArrayList<Value>());
         }
-       mymap.get(key).add(value);
+        mymap.get(key).add(value);
     }
     
     // Retorna los valores asociados a una llave
@@ -63,12 +62,15 @@ public class MultiMap <Key, Value> {
     }
 
 
-    public final String toStringValues(Key key) {
-        String result = Arrays.asList(mymap.get(key)).stream()
-                               .map(n -> String.valueOf(n))
-                                .collect(Collectors.joining(", ", "[ ", " ]"));
+    public final String toStringValues() {
+        String result = "";
+
+        for(Key k: mymap.keySet()) {
+            for(Value v: mymap.get(k)) {
+                result += "(" + k + ", " + v + ")\t";
+            }
+        }
 
         return result;
     }
-
 } 
