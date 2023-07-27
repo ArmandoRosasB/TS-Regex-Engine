@@ -3,6 +3,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Queue;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.HashMap;
@@ -183,6 +185,69 @@ public class Main {
         System.out.println(AFN.toString());
 
         // ------------------------------- Autómata Finito Determinista -------------------------------
+
+        // Creamos un grafo con costo para representar el Automata Finito Determinista
+        Wgraph<Character, Character> AFD = new Wgraph<Character, Character>(true);
+        char nuevo_nodo = 'A';
+        int objetivo = nodo;
+        
+        Queue<Character> xVisitar = new LinkedList<Character>();
+        HashSet<Character> nodos_aceptacion = new HashSet<Character>();
+        HashMap<Character, HashSet<Integer>> equivalencias = new  HashMap<Character, HashSet<Integer>>();
+        Iterator<Integer> itrEq; 
+
+        // 1era cerradura
+        equivalencias.put(nuevo_nodo, Wgraph.bfs(nodo-1, EPSILON, AFN));        
+        xVisitar.add(nuevo_nodo);
+        nuevo_nodo++;
+
+        if(equivalencias.get('A').contains(objetivo)){
+            nodos_aceptacion.add('A');
+        }
+        
+        while (!xVisitar.isEmpty()){
+            char nodo_actual = xVisitar.poll();
+            
+            for(int i = 0; i < alfabeto.length(); i++) { // Iteramos sobre el alfabeto
+                if (alfabeto.charAt(i) == EPSILON) continue;
+
+                HashSet<Integer> alcance = new HashSet<Integer>();
+                
+                itrEq = equivalencias.get(nodo_actual).iterator();
+                while(itrEq.hasNext()) {
+                    HashSet<Integer> ayudante = Wgraph.bfs(itrEq.next(), alfabeto.charAt(i), AFN);
+                    alcance.addAll(ayudante);
+                }
+
+                HashSet<Integer> alcance_cerradura = cerradura(alcance, AFN);
+                char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);
+
+                if(bandera == '-') {
+                    equivalencias.put(nuevo_nodo, alcance_cerradura);
+                    xVisitar.add(nuevo_nodo);
+                    bandera = nuevo_nodo;
+
+                    AFD.addEdge(nodo_actual, nuevo_nodo, alfabeto.charAt(i));
+                    nuevo_nodo++;
+                    
+                } else {
+                    AFD.addEdge(nodo_actual, bandera, alfabeto.charAt(i));
+                }
+
+                if(alcance_cerradura.contains(objetivo)){
+                    nodos_aceptacion.add(bandera);
+                }
+            }   
+        }
+        
+        System.out.println("----- Automata Finito Determinista -----\n");
+        System.out.println(AFD.toString());
+        
+        System.out.println("Nodos de aceptación\n");
+        for(char nodo_aceptado: nodos_aceptacion){
+            System.out.print(nodo_aceptado + " ");
+        }
+        
         scanner.close();
     }
 
