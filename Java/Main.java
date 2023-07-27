@@ -34,7 +34,7 @@ public class Main {
         // ------------------------------- Autómata Finito No Determinista -------------------------------
         
         for(int i = 0; i < regex.length(); i++){
-            
+            System.out.println("iteracion " + i);
             if (regex.charAt(i) == '(') {
                 operadores.push(regex.charAt(i));
 
@@ -44,7 +44,7 @@ public class Main {
                 // Agregamos un nodo de aceptación
                 AFN.addEdge(top.second, nodo, EPSILON);
 
-                if (ultimo_automata == new Automata<Integer, Integer>(-1, -1)) {
+                if (ultimo_automata.equals(new Automata<Integer, Integer>(-1, -1))) {
                     if (regex.charAt(i) == '*'){
                         // Conectamos el 1er nodo con el nuevo nodo (0 veces)
                         AFN.addEdge(top.first, nodo, EPSILON);
@@ -144,6 +144,7 @@ public class Main {
 
                 nodo += 2;           
             }
+
         }
 
         while(!operadores.isEmpty()) {
