@@ -61,6 +61,9 @@ public class MultiMap <Key, Value> {
         }
     }
 
+    public final HashSet<Key> keySet(){
+        return (HashSet<Key>) mymap.keySet();
+    }
 
     public final String toStringValues() {
         String result = "";
@@ -70,7 +73,6 @@ public class MultiMap <Key, Value> {
                 result += "(" + k + ", " + v + ")\t";
             }
         }
-
         return result;
     }
 } 

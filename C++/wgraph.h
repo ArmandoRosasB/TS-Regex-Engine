@@ -97,7 +97,7 @@ template <class Vertex, class Edge>
 std::set<Vertex> bfs(Vertex start, Edge& cost, WGraph<Vertex, Edge>* graph) {
 	std::set<Vertex> visited;
 	std::queue<Vertex> xVisit;
-	typename std::map<Vertex, Edge>::iterator itr;
+	typename std::multimap<Vertex, Edge>::iterator itr;
 
 	xVisit.push(start);
 	while (!xVisit.empty()) {

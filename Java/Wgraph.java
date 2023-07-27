@@ -2,6 +2,8 @@
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Wgraph <Vertex, Edge> {
     private boolean direction;
@@ -67,5 +69,28 @@ public class Wgraph <Vertex, Edge> {
         }
 
         return sb.toString();
+    }
+
+    /***********************************************************/
+    /**************************** BFS **************************/
+    /***********************************************************/
+
+    public static <Vertex, Edge> HashSet<Vertex> bfs(Vertex start, Edge cost, Wgraph<Vertex, Edge> graph) {
+        HashSet<Vertex> visited = new HashSet<Vertex>();
+        Queue<Vertex> xVisit =  new LinkedList<Vertex>();
+
+        xVisit.add(start);
+        while (!xVisit.isEmpty()) {
+            Vertex v = xVisit.remove();
+            
+            if (!visited.contains(v)) {
+                visited.add(v);
+                MultiMap<Vertex, Edge> connected = graph.getConnectionsFrom(v);
+                for (Vertex temporal : connected.keySet()) {
+                    if(connected.get(temporal).contains(cost)) xVisit.add(v);
+                }
+            }
+        }
+        return visited;
     }
 }
