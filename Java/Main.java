@@ -34,7 +34,6 @@ public class Main {
         // ------------------------------- Autómata Finito No Determinista -------------------------------
         
         for(int i = 0; i < regex.length(); i++){
-            System.out.println("iteracion " + i);
             if (regex.charAt(i) == '(') {
                 operadores.push(regex.charAt(i));
 
@@ -184,7 +183,7 @@ public class Main {
         System.out.println(AFN.toString());
 
         // ------------------------------- Autómata Finito Determinista -------------------------------
-
+        scanner.close();
     }
 
     public static HashSet<Integer> cerradura(HashSet<Integer> check, Wgraph<Integer, Character> AFN) {
