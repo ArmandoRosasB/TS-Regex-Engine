@@ -242,8 +242,7 @@ int main(int argc, char* argv[]){
                 set<int> ayudante = bfs(*itrEq, alfabeto[i], AFN);
                 alcance.merge(ayudante);
             }
-
-
+            
             set<int> alcance_cerradura = cerradura(alcance, AFN);
             char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);
 

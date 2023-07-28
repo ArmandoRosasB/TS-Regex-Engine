@@ -17,10 +17,10 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        if (args.length != 2) {
+        /*if (args.length != 2) {
             System.out.println("Uso: java nombre_archivo archivo_entrada archivo_salida \n");
             System.exit(-1);
-        }
+        }*/
 
         String alfabeto, regex;
         alfabeto = scanner.next();
@@ -207,6 +207,7 @@ public class Main {
         
         while (!xVisitar.isEmpty()){
             char nodo_actual = xVisitar.poll();
+            System.out.println();
             
             for(int i = 0; i < alfabeto.length(); i++) { // Iteramos sobre el alfabeto
                 if (alfabeto.charAt(i) == EPSILON) continue;
@@ -247,6 +248,7 @@ public class Main {
         for(char nodo_aceptado: nodos_aceptacion){
             System.out.print(nodo_aceptado + " ");
         }
+        System.out.println("");
         
         scanner.close();
     }
@@ -274,5 +276,4 @@ public class Main {
 
         return '-';
     }
-
 }
