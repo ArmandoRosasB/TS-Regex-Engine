@@ -22,8 +22,8 @@ public class MultiMap <Key, Value> {
     }
 
     // Retorna las llaves del multimapa en un set
-    public Set<Key> mykeySet() {
-        return mymap.keySet();
+    public HashSet<Key> mykeySet() {
+        return (HashSet<Key>) mymap.keySet();
     }
     
     // Valida si existe una llave en el multimapa
@@ -61,8 +61,8 @@ public class MultiMap <Key, Value> {
         }
     }
 
-    public final HashSet<Key> keySet(){
-        return (HashSet<Key>) mymap.keySet();
+    public final Set<Key> keySet(){
+        return mymap.keySet();
     }
 
     public final String toStringValues() {

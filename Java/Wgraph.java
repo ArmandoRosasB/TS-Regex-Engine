@@ -87,7 +87,7 @@ public class Wgraph <Vertex, Edge> {
                 visited.add(v);
                 MultiMap<Vertex, Edge> connected = graph.getConnectionsFrom(v);
                 for (Vertex temporal : connected.keySet()) {
-                    if(connected.get(temporal).contains(cost)) xVisit.add(v);
+                    if(connected.get(temporal).contains(cost)) xVisit.add(temporal);
                 }
             }
         }
