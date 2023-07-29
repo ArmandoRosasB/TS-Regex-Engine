@@ -1,30 +1,40 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Queue;
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.Stack;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Stack;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+import java.util.Scanner;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+
+import java.io.FileWriter;
+import java.io.File;
 
 public class Main {
     static char EPSILON = '$';
     static Automata<Integer, Integer> ultimo_automata = new Automata<Integer,Integer>(-1, -1);
     static Automata<Integer, Integer> automata_bloqueado = new Automata<Integer, Integer>(-1, -1);
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        /*if (args.length != 2) {
+    public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
             System.out.println("Uso: java nombre_archivo archivo_entrada archivo_salida \n");
             System.exit(-1);
-        }*/
+        }
+
+        File file = new File(args[1]);
+        FileWriter output = new FileWriter(file, true);
+        
+        StringBuilder sbAFN = new StringBuilder("");
+        Scanner scanner = reader(args[0]);
 
         String alfabeto, regex;
         alfabeto = scanner.next();
         regex = scanner.next();
+
 
         // Creamos un grafo con costo para representar el Automata Finito No Determinista
         Wgraph<Integer, Character> AFN = new Wgraph<Integer, Character>(true);
@@ -181,13 +191,15 @@ public class Main {
         nodo++;
         AFN.addEdge(operandos.peek().second, nodo, EPSILON);
         
-        System.out.println("----- Automata Finito No Determinista -----");
-        System.out.println(AFN.toString());
+        sbAFN.append("----- Automata Finito No Determinista -----\n");
+        sbAFN.append(AFN.toString()).append("\n\n\n");
+        output.write(sbAFN.toString());
 
         // ------------------------------- Autómata Finito Determinista -------------------------------
 
         // Creamos un grafo con costo para representar el Automata Finito Determinista
         Wgraph<Character, Character> AFD = new Wgraph<Character, Character>(true);
+        StringBuilder sbAFD = new StringBuilder("");
         char nuevo_nodo = 'A';
         int objetivo = nodo;
         
@@ -241,15 +253,18 @@ public class Main {
             }   
         }
         
-        System.out.println("----- Automata Finito Determinista -----\n");
-        System.out.println(AFD.toString());
+        sbAFD.append("----- Automata Finito Determinista -----\n\n");
+        sbAFD.append(AFD.toString()).append("\n");
         
-        System.out.println("Nodos de aceptación\n");
+        sbAFD.append("Nodos de aceptación\n");
         for(char nodo_aceptado: nodos_aceptacion){
-            System.out.print(nodo_aceptado + " ");
+            sbAFD.append(nodo_aceptado + " ");
         }
-        System.out.println("");
-        
+        sbAFD.append("\n");
+
+        output.write(sbAFD.toString());
+        output.close();
+
         scanner.close();
     }
 
@@ -275,5 +290,10 @@ public class Main {
         }
 
         return '-';
+    }
+
+    public static Scanner reader (String file) throws Exception{
+        InputStream ins = new FileInputStream(file);
+        return new Scanner(ins);
     }
 }
