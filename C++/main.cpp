@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include "wgraph.h"
+#include "../Librerias/C++/wgraph.h"
 #include <stdlib.h>
 #include <queue>
 
