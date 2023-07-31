@@ -2,6 +2,7 @@
 #include <set>
 #include <queue>
 #include <stack>
+#include <sstream>
 #include "exception.h"
 
 using namespace std;
@@ -20,6 +21,9 @@ class WGraph {
         multimap<Vertex, Edge> getConnectionsFrom(Vertex) const;
         void deleteFrom(Vertex);
         string toString() const;
+
+        set<Vertex> getVertexes();
+        map<Vertex, multimap<Vertex, Edge>> getEdges();
 };
 
 template<class Vertex, class Edge>
@@ -76,16 +80,22 @@ string WGraph<Vertex, Edge>::toString() const{
 	typename map<Vertex, Edge>::const_iterator j;
 
 	for(i = vertexes.begin(); i != vertexes.end(); i++) {
-		aux << (*i) << "\t";
-		for(j = edges.at((*i)).begin(); j != edges.at((*i)).end(); j++) {
-			aux << "(" << j->first << "," << j->second << ")\t";
-		}
-		aux << "\n";
+	    aux << (*i) << "\t";
+	 	for(j = edges.at((*i)).begin(); j != edges.at((*i)).end(); j++) {
+	 		aux << "(" << j->first << "," << j->second << ")\t";
+	 	}
+	 	aux << "\n";
 	}
 	aux << "\n";
 
 	return aux.str();
 }
+
+template<class Vertex, class Edge>
+set<Vertex> WGraph<Vertex, Edge>::getVertexes() { return vertexes; }
+
+template<class Vertex, class Edge>
+map<Vertex, multimap<Vertex, Edge>> WGraph<Vertex, Edge>::getEdges() { return edges; }
 
 
 
@@ -94,7 +104,7 @@ string WGraph<Vertex, Edge>::toString() const{
 /***********************************************************/
 
 template <class Vertex, class Edge>
-std::set<Vertex> bfs(Vertex start, Edge& cost, WGraph<Vertex, Edge>* graph) {
+std::set<Vertex> bfs(Vertex start, Edge cost, WGraph<Vertex, Edge>* graph) {
 	std::set<Vertex> visited;
 	std::queue<Vertex> xVisit;
 	typename std::multimap<Vertex, Edge>::iterator itr;
