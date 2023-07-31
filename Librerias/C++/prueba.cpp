@@ -1,14 +1,22 @@
-#include <iostream>
-#include "AFN.h"
+#include "AFD.h"
 
 using namespace std;
 
 int main (int argc, char* argv[]){
-    AFN prueba = AFN("ab", "(($|a)b*)*");
+    AFN* prueba = new AFN("ab", "(($|a)b*)*");
+    AFD* prueba2 = new AFD(prueba);
     
-    cout << prueba.getInicio() << endl;
-    cout << prueba.getFin() << endl;
-    cout << prueba.toString();
+    cout << "Ini: " << prueba->getInicio() << endl;
+    cout << "Fin: "  << prueba->getFin() << endl << endl;
+    cout << prueba->toString() << endl;
+    
+    cout << prueba2->toString() << endl;
+    
+    for(char c : prueba2->getAceptacion()){
+        cout << c << " ";
+    }
+    
+    cout << endl;
 
     return 0;
 }

@@ -5,7 +5,6 @@
 #include <sstream>
 #include <fstream>
 #include <stdlib.h>
-#include <queue>
 #include "wgraph.h"
 
 const char EPSILON = '$';
@@ -36,7 +35,6 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
     int nodo = 0;
     stack<char> operadores;
     stack<automata> operandos;
-set<int> test = bfd(&nodo, &EPSILON, grafo);
     automata ultimo_automata (-1, -1);
     automata automata_bloqueado(-1, -1);
 
