@@ -43,7 +43,7 @@ AFD :: AFD(AFN noDeterminista){
     if(equivalencias['A'].find(objetivo) != equivalencias['A'].end()){
         nodos_aceptacion.insert('A');
     }
-
+   
     while (!xVisitar.empty()){
         char nodo_actual = xVisitar.front();
         xVisitar.pop();
@@ -58,11 +58,13 @@ AFD :: AFD(AFN noDeterminista){
                 alcance.merge(ayudante);
             }
 
-
+            if (alcance.size() == 0) continue;
+ 
             set<int> alcance_cerradura = cerradura(alcance, noDeterminista.getGrafo());
             char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);
 
             if(bandera == '-') {
+              
                 equivalencias.insert(pair<char, set<int>>(nuevo_nodo, alcance_cerradura));
                 xVisitar.push(nuevo_nodo);
                 bandera = nuevo_nodo;
@@ -96,7 +98,7 @@ AFD :: AFD(AFN* noDeterminista){
     set<int>::iterator itrEq;
 
     // 1era cerradura
-    equivalencias.insert(pair<char, set<int>>(nuevo_nodo, bfs(noDeterminista->getInicio(), EPSILON, noDeterminista->getGrafo())));        
+    equivalencias.insert(pair<char, set<int>>(nuevo_nodo, bfs(noDeterminista->getInicio(), EPSILON, noDeterminista->getGrafo())));   
     xVisitar.push(nuevo_nodo);
     nuevo_nodo++;
 
@@ -118,6 +120,7 @@ AFD :: AFD(AFN* noDeterminista){
                 alcance.merge(ayudante);
             }
 
+            if (alcance.size() == 0) continue;
 
             set<int> alcance_cerradura = cerradura(alcance, noDeterminista->getGrafo());
             char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);

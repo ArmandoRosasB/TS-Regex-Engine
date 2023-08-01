@@ -7,14 +7,13 @@ import java.util.Queue;
 public class AFD {
     private Wgraph<Character, Character> grafo;
     private HashSet<Character> nodos_aceptacion;
-    private final char EPSILON = '$';
 
     private HashSet<Integer> cerradura(HashSet<Integer> check, Wgraph<Integer, Character> AFN) {
         Iterator <Integer> itr = check.iterator();
         HashSet<Integer> alcance = new HashSet<Integer>();
 
         while(itr.hasNext()) {
-            HashSet<Integer> ayudante = Wgraph.bfs(itr.next(), EPSILON, AFN);
+            HashSet<Integer> ayudante = Wgraph.bfs(itr.next(), Wgraph.EPSILON, AFN);
             alcance.addAll(ayudante);
         }
 
@@ -47,7 +46,7 @@ public class AFD {
         Iterator<Integer> itrEq; 
 
         // 1era cerradura
-        equivalencias.put(nuevo_nodo, Wgraph.bfs(noDeterminista.getInicio(), EPSILON, noDeterminista.getGrafo()));        
+        equivalencias.put(nuevo_nodo, Wgraph.bfs(noDeterminista.getInicio(), Wgraph.EPSILON, noDeterminista.getGrafo()));        
         xVisitar.add(nuevo_nodo);
         nuevo_nodo++;
 
@@ -60,7 +59,7 @@ public class AFD {
             System.out.println();
             
             for(int i = 0; i < alfabeto.length(); i++) { // Iteramos sobre el alfabeto
-                if (alfabeto.charAt(i) == EPSILON) continue;
+                if (alfabeto.charAt(i) == Wgraph.EPSILON) continue;
 
                 HashSet<Integer> alcance = new HashSet<Integer>();
                 
@@ -69,6 +68,8 @@ public class AFD {
                     HashSet<Integer> ayudante = Wgraph.bfs(itrEq.next(), alfabeto.charAt(i), noDeterminista.getGrafo());
                     alcance.addAll(ayudante);
                 }
+
+                if (alcance.isEmpty()) continue;
 
                 HashSet<Integer> alcance_cerradura = cerradura(alcance, noDeterminista.getGrafo());
                 char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);

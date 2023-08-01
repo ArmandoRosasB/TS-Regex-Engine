@@ -16,9 +16,8 @@
 
 ----- Automata Finito Determinista -----
 A	(B,a)	(C,b)	
-B	(B,a)	(D,b)	
-C	(C,b)	(D,a)	
-D	(D,a)	(D,b)	
+B	(B,a)	
+C	(C,b)	
 
 Nodos de aceptación
-A B C D 
+A B C 

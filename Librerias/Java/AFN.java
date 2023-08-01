@@ -3,7 +3,6 @@ import java.util.Stack;
 
 public class AFN {
     private Wgraph<Integer, Character> grafo;
-    private final char EPSILON = '$';
     private String alfabeto;
     private int inicio;
     private int fin;
@@ -28,42 +27,42 @@ public class AFN {
                 Automata<Integer, Integer> top = operandos.pop();
 
                 // Agregamos un nodo de aceptación
-                grafo.addEdge(top.second, nodo, EPSILON);
+                grafo.addEdge(top.second, nodo, Wgraph.EPSILON);
 
                 if (ultimo_automata.equals(new Automata<Integer, Integer>(-1, -1))) {
                     if (regex.charAt(i) == '*'){
                         // Conectamos el 1er nodo con el nuevo nodo (0 veces)
-                        grafo.addEdge(top.first, nodo, EPSILON);
+                        grafo.addEdge(top.first, nodo, Wgraph.EPSILON);
 
                         //Conectamos el último nodo con el primero (1...* veces)
-                        grafo.addEdge(top.second, top.first, EPSILON);
+                        grafo.addEdge(top.second, top.first, Wgraph.EPSILON);
 
                     } 
                     else if (regex.charAt(i) == '?'){
                         // Conectamos el 1er nodo con el nuevo nodo (0 veces)
-                        grafo.addEdge(top.first, nodo, EPSILON);
+                        grafo.addEdge(top.first, nodo, Wgraph.EPSILON);
 
                     } 
                     else if (regex.charAt(i) == '+'){
                         //Conectamos el último nodo con el primero (1...* veces)
-                        grafo.addEdge(top.second, top.first, EPSILON);
+                        grafo.addEdge(top.second, top.first, Wgraph.EPSILON);
 
                     }
                 } else {
                     if (regex.charAt(i) == '*'){
                         // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
-                        grafo.addEdge(ultimo_automata.first, nodo, EPSILON);
+                        grafo.addEdge(ultimo_automata.first, nodo, Wgraph.EPSILON);
 
                         // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
-                        grafo.addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
+                        grafo.addEdge(ultimo_automata.second, ultimo_automata.first, Wgraph.EPSILON);
                     }
                     else if (regex.charAt(i) == '?'){
                         // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
-                        grafo.addEdge(ultimo_automata.first, nodo, EPSILON);
+                        grafo.addEdge(ultimo_automata.first, nodo, Wgraph.EPSILON);
                     } 
                     else if (regex.charAt(i) == '+'){
                         // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
-                        grafo.addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
+                        grafo.addEdge(ultimo_automata.second, ultimo_automata.first, Wgraph.EPSILON);
                     }
                     ultimo_automata = new Automata<Integer, Integer>(-1, -1);
                 }
@@ -87,17 +86,17 @@ public class AFN {
 
                     // Agregamos nodo origen
                     origen = nodo;
-                    grafo.addEdge(origen, primer_automata.first, EPSILON);
-                    grafo.addEdge(origen, segundo_automata.first, EPSILON);
+                    grafo.addEdge(origen, primer_automata.first, Wgraph.EPSILON);
+                    grafo.addEdge(origen, segundo_automata.first, Wgraph.EPSILON);
                     nodo++;
 
                     // Agregamos nodo final
-                    grafo.addEdge(segundo_automata.second, nodo, EPSILON);
-                    grafo.addEdge(primer_automata.second, nodo, EPSILON);
+                    grafo.addEdge(segundo_automata.second, nodo, Wgraph.EPSILON);
+                    grafo.addEdge(primer_automata.second, nodo, Wgraph.EPSILON);
 
                     // Agregamos nodo de aceptación
                     destino = nodo + 1;
-                    grafo.addEdge(nodo, destino, EPSILON);
+                    grafo.addEdge(nodo, destino, Wgraph.EPSILON);
                     nodo += 2;
 
                     // Agregamos a la pila de operandos el nuevo autómata
@@ -143,17 +142,17 @@ public class AFN {
 
             // Agregamos nodo origen
             origen = nodo;
-            grafo.addEdge(origen, primer_automata.first, EPSILON);
-            grafo.addEdge(origen, segundo_automata.first, EPSILON);
+            grafo.addEdge(origen, primer_automata.first, Wgraph.EPSILON);
+            grafo.addEdge(origen, segundo_automata.first, Wgraph.EPSILON);
             nodo++;
 
             // Agregamos nodo final
-            grafo.addEdge(segundo_automata.second, nodo, EPSILON);
-            grafo.addEdge(primer_automata.second, nodo, EPSILON);
+            grafo.addEdge(segundo_automata.second, nodo, Wgraph.EPSILON);
+            grafo.addEdge(primer_automata.second, nodo, Wgraph.EPSILON);
 
             // Agregamos nodo de aceptación
             destino = nodo + 1;
-            grafo.addEdge(nodo, destino, EPSILON);
+            grafo.addEdge(nodo, destino, Wgraph.EPSILON);
             nodo += 2;
 
             // Agregamos a la pila de operandos el nuevo autómata
@@ -162,11 +161,11 @@ public class AFN {
 
         ultimo_automata = new Automata<Integer, Integer>(-1, -1);
         automata_bloqueado = new Automata<Integer, Integer>(-1, -1);
-        grafo.addEdge(nodo, operandos.peek().first, EPSILON);
+        grafo.addEdge(nodo, operandos.peek().first, Wgraph.EPSILON);
         this.inicio = nodo;
 
         nodo++;
-        grafo.addEdge(operandos.peek().second, nodo, EPSILON);
+        grafo.addEdge(operandos.peek().second, nodo, Wgraph.EPSILON);
 
         this.fin = nodo;
     }

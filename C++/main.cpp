@@ -243,6 +243,8 @@ int main(int argc, char* argv[]){
                 alcance.merge(ayudante);
             }
             
+            if (alcance.size() == 0) continue;
+
             set<int> alcance_cerradura = cerradura(alcance, AFN);
             char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);
 

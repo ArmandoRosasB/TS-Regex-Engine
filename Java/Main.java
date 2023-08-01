@@ -219,7 +219,6 @@ public class Main {
         
         while (!xVisitar.isEmpty()){
             char nodo_actual = xVisitar.poll();
-            System.out.println();
             
             for(int i = 0; i < alfabeto.length(); i++) { // Iteramos sobre el alfabeto
                 if (alfabeto.charAt(i) == EPSILON) continue;
@@ -231,6 +230,8 @@ public class Main {
                     HashSet<Integer> ayudante = Wgraph.bfs(itrEq.next(), alfabeto.charAt(i), AFN);
                     alcance.addAll(ayudante);
                 }
+
+                if (alcance.isEmpty()) continue;
 
                 HashSet<Integer> alcance_cerradura = cerradura(alcance, AFN);
                 char bandera = buscar_equivalencia(alcance_cerradura, equivalencias);
