@@ -10,6 +10,8 @@ public class Wgraph <Vertex, Edge> {
     private HashSet<Vertex> vertexes;
     private HashMap<Vertex, MultiMap<Vertex, Edge>> edges;
 
+    public static char EPSILON = '$';
+
     Wgraph(boolean direction) {
         vertexes = new HashSet<Vertex>();
         edges = new HashMap<Vertex, MultiMap<Vertex, Edge>>();
@@ -79,18 +81,26 @@ public class Wgraph <Vertex, Edge> {
         HashSet<Vertex> visited = new HashSet<Vertex>();
         Queue<Vertex> xVisit =  new LinkedList<Vertex>();
 
-        xVisit.add(start);
-        while (!xVisit.isEmpty()) {
-            Vertex v = xVisit.remove();
-            
-            if (!visited.contains(v)) {
-                visited.add(v);
-                MultiMap<Vertex, Edge> connected = graph.getConnectionsFrom(v);
-                for (Vertex temporal : connected.keySet()) {
-                    if(connected.get(temporal).contains(cost)) xVisit.add(temporal);
+        if( (char) cost != '$') {
+            MultiMap<Vertex, Edge> connected = graph.getConnectionsFrom(start);
+            for (Vertex temporal : connected.keySet()) {
+                if(connected.get(temporal).contains(cost)) visited.add(temporal);
+            }
+        } else {
+            xVisit.add(start);
+            while (!xVisit.isEmpty()) {
+                Vertex v = xVisit.remove();
+                
+                if (!visited.contains(v)) {
+                    visited.add(v);
+                    MultiMap<Vertex, Edge> connected = graph.getConnectionsFrom(v);
+                    for (Vertex temporal : connected.keySet()) {
+                        if(connected.get(temporal).contains(cost)) xVisit.add(temporal);
+                    }
                 }
             }
         }
+        
         return visited;
     }
 }

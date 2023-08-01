@@ -1,7 +1,7 @@
 
 public class Prueba {
     public static void main(String[] args) {
-        AFN prueba = new AFN("ab", "(($|a)b*)*");
+        AFN prueba = new AFN("ab", "(ab)|(ab*)");
         AFD prueba2 = new AFD(prueba);
 
         System.out.println("Ini:" + prueba.getInicio());

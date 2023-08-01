@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include "wgraph.h"
 
-const char EPSILON = '$';
 typedef pair<int, int> automata;
 
 class AFN {

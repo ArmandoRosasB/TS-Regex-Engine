@@ -3,9 +3,12 @@
 #include <queue>
 #include <stack>
 #include <sstream>
+#include <typeinfo>
 #include "exception.h"
 
 using namespace std;
+
+const char EPSILON = '$';
 
 template <class Vertex, class Edge>
 class WGraph {
@@ -109,16 +112,26 @@ std::set<Vertex> bfs(Vertex start, Edge cost, WGraph<Vertex, Edge>* graph) {
 	std::queue<Vertex> xVisit;
 	typename std::multimap<Vertex, Edge>::iterator itr;
 
-	xVisit.push(start);
-	while (!xVisit.empty()) {
-		Vertex v = xVisit.front(); xVisit.pop();
-		if (visited.find(v) == visited.end()) {
-			visited.insert(v);
-			std::multimap<Vertex, Edge> connected = graph->getConnectionsFrom(v);
-			for (itr = connected.begin(); itr != connected.end(); itr++) {
-                if (itr->second == cost) xVisit.push( itr->first );
-			}
-		}
-	}
+
+    if (std::is_same<Edge, char>::value && cost != EPSILON) {
+        std::multimap<Vertex, Edge> connected = graph->getConnectionsFrom(start);
+        for (itr = connected.begin(); itr != connected.end(); itr++) {
+            if (itr->second == cost) visited.insert( itr->first );
+        }
+    } else {
+        xVisit.push(start);
+        while (!xVisit.empty()) {
+            Vertex v = xVisit.front(); xVisit.pop();
+            if (visited.find(v) == visited.end()) {
+                visited.insert(v);
+                std::multimap<Vertex, Edge> connected = graph->getConnectionsFrom(v);
+                for (itr = connected.begin(); itr != connected.end(); itr++) {
+                    if (itr->second == cost) xVisit.push( itr->first );
+                }
+            }
+        }
+    }
+
 	return visited;
 }
+

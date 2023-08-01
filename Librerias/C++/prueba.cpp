@@ -3,7 +3,7 @@
 using namespace std;
 
 int main (int argc, char* argv[]){
-    AFN* prueba = new AFN("ab", "(($|a)b*)*");
+    AFN* prueba = new AFN("ab", "ab|ab*");
     AFD* prueba2 = new AFD(prueba);
     
     cout << "Ini: " << prueba->getInicio() << endl;
