@@ -22,6 +22,7 @@ class WGraph {
         bool containsVertex(Vertex) const;
         void addEdge(Vertex, Vertex, Edge);
         multimap<Vertex, Edge> getConnectionsFrom(Vertex) const;
+        Vertex getConnectionsFrom(Vertex, Edge) const;
         void deleteFrom(Vertex);
         string toString() const;
 
@@ -69,6 +70,28 @@ multimap<Vertex, Edge> WGraph<Vertex, Edge>::getConnectionsFrom(Vertex v) const{
 	return result;
 }
 
+/* 
+ * ADVERTENCIA
+ * 
+ * SOLO UTILIZAR ESTA FUNCION SI Y SOLO SI EN SU GRAFO EXISTE SOLO UNA
+ * POSIBLE CONEXION CON EL COSTO DADO
+ * 
+*/
+template<class Vertex, class Edge>
+Vertex WGraph<Vertex, Edge>::getConnectionsFrom(Vertex v, Edge cost) const{
+    if(!containsVertex(v)) {
+        throw NoSuchElement();
+    }
+
+    typename multimap<Vertex, Edge>::const_iterator itr;
+
+    for (itr = edges.at(v).begin(); itr != edges.at(v).end(); itr++) {
+        if(itr->second == cost) return itr->first;
+    }
+
+	return '-';
+}
+
 template<class Vertex, class Edge>
 void WGraph<Vertex, Edge>::deleteFrom(Vertex v) {
     vertexes.erase(v);
@@ -107,14 +130,14 @@ map<Vertex, multimap<Vertex, Edge>> WGraph<Vertex, Edge>::getEdges() { return ed
 /***********************************************************/
 
 template <class Vertex, class Edge>
-std::set<Vertex> bfs(Vertex start, Edge cost, WGraph<Vertex, Edge>* graph) {
-	std::set<Vertex> visited;
-	std::queue<Vertex> xVisit;
-	typename std::multimap<Vertex, Edge>::iterator itr;
+set<Vertex> bfs(Vertex start, Edge cost, WGraph<Vertex, Edge>* graph) {
+	set<Vertex> visited;
+	queue<Vertex> xVisit;
+	typename multimap<Vertex, Edge>::iterator itr;
 
 
-    if (std::is_same<Edge, char>::value && cost != EPSILON) {
-        std::multimap<Vertex, Edge> connected = graph->getConnectionsFrom(start);
+    if (is_same<Edge, char>::value && cost != EPSILON) {
+        multimap<Vertex, Edge> connected = graph->getConnectionsFrom(start);
         for (itr = connected.begin(); itr != connected.end(); itr++) {
             if (itr->second == cost) visited.insert( itr->first );
         }
@@ -124,7 +147,7 @@ std::set<Vertex> bfs(Vertex start, Edge cost, WGraph<Vertex, Edge>* graph) {
             Vertex v = xVisit.front(); xVisit.pop();
             if (visited.find(v) == visited.end()) {
                 visited.insert(v);
-                std::multimap<Vertex, Edge> connected = graph->getConnectionsFrom(v);
+                multimap<Vertex, Edge> connected = graph->getConnectionsFrom(v);
                 for (itr = connected.begin(); itr != connected.end(); itr++) {
                     if (itr->second == cost) xVisit.push( itr->first );
                 }
@@ -134,4 +157,3 @@ std::set<Vertex> bfs(Vertex start, Edge cost, WGraph<Vertex, Edge>* graph) {
 
 	return visited;
 }
-

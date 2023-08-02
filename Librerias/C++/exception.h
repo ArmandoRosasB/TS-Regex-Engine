@@ -19,13 +19,13 @@
 
 /*********** Exception ***********/
 class Exception : public std::exception {
-protected:
-	std::string text;
+	protected:
+		std::string text;
 
-public:
-	Exception() throw();
-	~Exception() throw();
-	virtual const char* what() const throw();
+	public:
+		Exception() throw();
+		~Exception() throw();
+		virtual const char* what() const throw();
 };
 
 Exception::Exception() throw ()
@@ -40,28 +40,28 @@ const char* Exception::what() const throw() {
 
 /*********** RangeError ***********/
 class RangeError : public Exception {
-public:
-	RangeError() throw();
+	public:
+		RangeError() throw();
 };
 
 RangeError::RangeError() throw () {
-		text = std::string("RangeError");
+	text = std::string("RangeError");
 }
 
 /*********** OutOfMemory ***********/
 class OutOfMemory : public Exception {
-public:
-	OutOfMemory() throw();
+	public:
+		OutOfMemory() throw();
 };
 
 OutOfMemory::OutOfMemory() throw () {
-		text = std::string("OutOfMemory");
+	text = std::string("OutOfMemory");
 }
 
 /*********** IndexOutOfBounds ***********/
 class IndexOutOfBounds : public Exception {
-public:
-	IndexOutOfBounds() throw();
+	public:
+		IndexOutOfBounds() throw();
 };
 
 IndexOutOfBounds::IndexOutOfBounds() throw () {
@@ -70,31 +70,43 @@ IndexOutOfBounds::IndexOutOfBounds() throw () {
 
 /*********** NoSuchElement ***********/
 class NoSuchElement : public Exception {
-public:
-	NoSuchElement() throw();
+	public:
+		NoSuchElement() throw();
 };
 
 NoSuchElement::NoSuchElement() throw () {
-		text = std::string("NoSuchElement");
+	text = std::string("NoSuchElement");
 }
 
 /*********** IllegalAction ***********/
 class IllegalAction : public Exception {
-public:
-	IllegalAction() throw();
+	public:
+		IllegalAction() throw();
 };
 
 IllegalAction::IllegalAction() throw () {
-		text = std::string("IllegalAction");
+	text = std::string("IllegalAction");
 }
 
 /*********** Overflow ***********/
 class Overflow : public Exception {
-public:
-	Overflow() throw();
+	public:
+		Overflow() throw();
 };
 
 Overflow::Overflow() throw () {
-		text = std::string("Overflow");
+	text = std::string("Overflow");
 }
+
+/**************** TS REGEX ****************/
+
+class IllegalCharacter : public Exception {
+	public: 
+		IllegalCharacter() throw();
+};
+
+IllegalCharacter::IllegalCharacter() throw() {
+	text = std::string("IllegalCharacter");
+}
+
 #endif /* EXCEPTION_H */
