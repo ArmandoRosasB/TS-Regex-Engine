@@ -4,6 +4,7 @@
 #include <string>
 
 using namespace std;
+
 bool match(string, string, string);
 vector<int> search(string, string, string, int i = 0);
 void replace(string, string, string&, string);
@@ -14,7 +15,7 @@ const string BIN = "01";
 
 int main(int argc, char* argv[]) {
 
-    cout  << "TSregex match: "<< match("mnpq", "(mn*|p?q)+", "mnnnnnnnnpqqqq") << endl;
+    cout  << "TSregex match: " << match("mnpq", "(mn*|p?q)+", "mnnnnnnnnpqqqq") << endl;
     
     vector<int> substr = vector<int>(2, 0);
     substr = search(A_Z, "class", "public class HelloWorld {}");

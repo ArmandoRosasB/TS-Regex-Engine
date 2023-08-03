@@ -1,3 +1,16 @@
+// =================================================================
+//
+// Archivo: AFD.h
+// Autores: José Armando Rosas Balderas
+//          Ramona Nájera Fuentes
+// Descripción: Este archivo es una librería que contiene la 
+//              construcción de un automata finito determinista
+//              representado con un grafo con costo.
+//
+// Copyright© 2023 by TomatoStack.
+//
+// =================================================================
+
 #ifndef AFD_H
 #define AFD_H
 

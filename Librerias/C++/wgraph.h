@@ -1,3 +1,16 @@
+// =================================================================
+//
+// Archivo: wgraph.h
+// Autores: José Armando Rosas Balderas
+//          Ramona Nájera Fuentes
+// Descripción: Este archivo es una librería que contiene la 
+//              construcción de un grafo con costo a partir del
+//              uso de un mapa.
+//
+// Copyright© 2023 by TomatoStack.
+//
+// =================================================================
+
 #include <map>
 #include <set>
 #include <queue>
