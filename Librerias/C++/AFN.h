@@ -1,3 +1,16 @@
+// =================================================================
+//
+// Archivo: AFN.h
+// Autores: José Armando Rosas Balderas
+//          Ramona Nájera Fuentes
+// Descripción: Este archivo contiene la construcción de un 
+//              automata finito no determinista a partir del 
+//              uso de un grafo con peso.
+//
+// Copyright© 2023 by TomatoStack.
+//
+// =================================================================
+
 #ifndef AFN_H
 #define AFN_H
 
