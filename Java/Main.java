@@ -1,3 +1,6 @@
+//import tsregex.Automata;
+//import tsregex.Wgraph;
+
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.HashSet;
