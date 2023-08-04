@@ -1,3 +1,4 @@
+//package tsregex;
 
 import java.util.Stack;
 
@@ -7,7 +8,7 @@ public class AFN {
     private int inicio;
     private int fin;
 
-    AFN(String alfabeto, String regex) {
+    /*public*/ AFN(String alfabeto, String regex) {
         this.alfabeto = alfabeto;
         Automata<Integer, Integer> ultimo_automata = new Automata<Integer,Integer>(-1, -1);
         Automata<Integer, Integer> automata_bloqueado = new Automata<Integer, Integer>(-1, -1);

@@ -24,13 +24,13 @@ int main (int argc, char* argv[]){
     tsregex* caso1 = new tsregex("mnpq", "(mn*|p?q)+");
     cout << "TSregex match: "<< caso1->match("mnnnnnnnnpqqqq") << endl;
 
-    tsregex* caso2 = new tsregex(caso2->A_Z, "class");
+    tsregex* caso2 = new tsregex(tsregex :: A_Z, "class");
     vector<int> substr = vector<int>(2, 0);
     substr = caso2->search("public class HelloWorld {}");
     cout  << "TSregex search: [" << substr[0] << ", " <<  substr[1] << "]"<< endl;
 
 
-    tsregex* caso3 = new tsregex(caso3->BIN, "1*01|0+");
+    tsregex* caso3 = new tsregex(tsregex :: BIN, "1*01|0+");
 
     string cadena = "0111";
     cout  << "TSregex replace: " << cadena << " ---> ";
@@ -38,7 +38,7 @@ int main (int argc, char* argv[]){
     caso3->replace(cadena, "9876");
     cout << cadena << endl;
 
-    tsregex* caso4 = new tsregex(caso3->BIN, "1+");
+    tsregex* caso4 = new tsregex(tsregex :: BIN, "1+");
 
     string cadena2 = "11100011101";
     cout  << "TSregex replaceAll: " << cadena2 << " ---> ";

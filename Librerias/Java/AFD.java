@@ -1,3 +1,5 @@
+//package tsregex;
+
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +34,7 @@ public class AFD {
         return '-';
     }
 
-    AFD(AFN noDeterminista) {
+    /*public*/ AFD(AFN noDeterminista) {
         // Creamos un grafo con costo para representar el Automata Finito Determinista
         this.grafo = new Wgraph<Character, Character>(true);
         this.nodos_aceptacion = new HashSet<Character>();
@@ -56,7 +58,6 @@ public class AFD {
         
         while (!xVisitar.isEmpty()){
             char nodo_actual = xVisitar.poll();
-            System.out.println();
             
             for(int i = 0; i < alfabeto.length(); i++) { // Iteramos sobre el alfabeto
                 if (alfabeto.charAt(i) == Wgraph.EPSILON) continue;

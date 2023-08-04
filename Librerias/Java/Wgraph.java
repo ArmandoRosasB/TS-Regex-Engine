@@ -1,3 +1,4 @@
+//package tsregex;
 
 import java.util.HashSet;
 import java.util.HashMap;
@@ -12,11 +13,12 @@ public class Wgraph <Vertex, Edge> {
 
     public static char EPSILON = '$';
 
-    Wgraph(boolean direction) {
+    /*public*/ Wgraph(boolean direction) {
         vertexes = new HashSet<Vertex>();
         edges = new HashMap<Vertex, MultiMap<Vertex, Edge>>();
         this.direction = direction;
     }
+    
 
     public final boolean containsVertex (Vertex v) {
         return vertexes.contains(v);
@@ -52,6 +54,27 @@ public class Wgraph <Vertex, Edge> {
         }
 
         return result;
+    }
+
+    /* 
+    * ADVERTENCIA
+    * 
+    * SOLO UTILIZAR ESTA FUNCION SI Y SOLO SI EN SU GRAFO EXISTE SOLO UNA
+    * POSIBLE CONEXION CON EL COSTO DADO
+    * 
+    */
+    public final Character getConnectionsFrom(Vertex v, Edge cost) {
+        if(!containsVertex(v)) {
+            System.err.println("WARNING\n  NoSuchElement"); // throw NoSuchElement();
+        }
+
+        MultiMap<Vertex, Edge> aux = edges.get(v);
+
+        for(Vertex temporal : aux.keySet()){
+            if (aux.get(temporal).contains(cost)) return (Character) temporal;
+        }
+
+        return '-';
     }
 
     public void deleteFrom(Vertex v) {
