@@ -22,6 +22,7 @@ public class TSregex {
     public final static String DIGITS = "0123456789";
     public final static String BIN = "01";
 
+    public final static String ALL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     private AFN automata_finito_no_determinista;
     private AFD automata_finito_determinista;
