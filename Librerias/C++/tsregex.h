@@ -29,6 +29,7 @@ class tsregex {
         std::string regex;
 
     public:
+    inline const static std::string ALL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         inline const static std::string A_Z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         inline static const std::string MINUS_A_Z = "abcdefghijklmnopqrstuvwxyz";
         inline static const std::string MAYUS_A_Z = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
