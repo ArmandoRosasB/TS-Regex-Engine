@@ -78,6 +78,8 @@ public class AFN {
                 automata_bloqueado = operandos.peek();
             
             } else if (regex.charAt(i) == ')') {
+                int auxOrigen = nodo;
+
                 while(operadores.pop() != '(') {
                     int origen, destino;
 
@@ -102,9 +104,9 @@ public class AFN {
 
                     // Agregamos a la pila de operandos el nuevo autómata
                     operandos.push(new Automata<Integer, Integer>(origen, destino));
+                    ultimo_automata = new Automata<Integer, Integer>(auxOrigen, destino);
                 }
                 
-                ultimo_automata = new Automata<Integer, Integer>(-1, -1);
                 automata_bloqueado = new Automata<Integer, Integer>(-1, -1);
                 
             } else { // Caracter del alfabeto

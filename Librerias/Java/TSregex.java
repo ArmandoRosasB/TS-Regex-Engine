@@ -14,6 +14,8 @@
 
 //package tsregex;
 
+import java.util.HashSet;
+
 public class TSregex {
     public final static String A_Z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public final static String MINUS_A_Z = "abcdefghijklmnopqrstuvwxyz";
@@ -166,4 +168,6 @@ public class TSregex {
     public Wgraph<Character, Character> getAFD(){
         return automata_finito_determinista.getGrafo();
     }
+
+    public HashSet<Character> getAceptacion() { return automata_finito_determinista.getAceptacion(); }
 }
