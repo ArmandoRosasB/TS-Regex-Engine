@@ -1,15 +1,23 @@
-#include <iostream>
 #include <stdlib.h>
 #include "../../Librerias/C++/tsregex.h"
 
-using namespace std;
+#ifdef __linux__
+#define LIMPIAR "clear"
+#endif // __linux__
+ 
+#ifdef __MINGW32__
+#define LIMPIAR "cls"
+#endif // __MINGW32_
 
 void desplegar_alfabeto(string&);
+void pausa();
 
 int main (int argc, char* argv[]){
     string regex, alfabeto;
-    string nombre;
+    string nombre, cadena, reemplazo;
     tsregex * camino;
+
+    vector<int> posiciones;
 
     int opcion;
     int eleccion_alfabeto;
@@ -17,10 +25,11 @@ int main (int argc, char* argv[]){
     cout << "¡Hola! ¿Cuál es tu nombre? ";
     cin >> nombre;
 
-    cout << "Hola " << nombre << ". Bienvenido al Menú Interactivo para Expresiones Regulares de Tomato Stack 🍅";
+    cout << "Hola " << nombre << ". Bienvenido al Menú Interactivo para Expresiones Regulares de Tomato Stack 🍅" << endl;
     cout << "Aquí podrás hacer uso de nuestro propio motor de expresiones regulares..." << endl;
     cout << "Para comenzar, ingresa la expresión regular con la que estarás trabajando" << endl;
-    cout << "NOTA Esta versión solo soporta los siguientes operadores * + ? | ()" << endl << endl;
+    cout << "  📌 Esta versión solo soporta los siguientes operadores * + ? | ()" << endl << endl;
+    cout << "  📌 Epsilon está representado con el caracter '" << EPSILON << "'\n" << endl << endl;
 
     cout << "Regex: "; cin >> regex;
 
@@ -28,10 +37,14 @@ int main (int argc, char* argv[]){
     
     desplegar_alfabeto(alfabeto);
 
+    camino = new tsregex(alfabeto, regex);
+
     do
     {
-        system("cls");
+        system(LIMPIAR);
         cout << "¡Bienvenido al Menú Interactivo para Expresiones Regulares de Tomato Stack 🍅!" << endl << endl;
+        cout << "Alfabeto: " << alfabeto << endl;
+        cout << "Regex: " << regex << endl << endl; 
         cout << "Selecciona alguna de las siguientes opciones..." << endl;
         
         cout << "FUNCIONES\n\t1. match\n\t2. search\n\t3. replace\n\t4. replace all"<< endl;
@@ -42,62 +55,126 @@ int main (int argc, char* argv[]){
         cout << "Elige tu opcion " << nombre << ": ";
         cin >> opcion;
 
-        cout << "\n\n";
-
         switch (opcion)
         {
         case 1:
-         
+
+            cout << "Ingresa la cadena a analizar: ";
+            cin >> cadena;
+
+            if (camino->match(cadena)) {
+                cout << "\nLa cadena ingresada cumple con la expresión regular" << endl;
+            } else {
+                cout << "\nLa cadena ingresada no cumple con la expresión regular" << endl;
+            }
+            pausa();
             break;
         
         case 2:
-         
+            cout << "Ingresa la cadena a analizar: ";
+            cin >> cadena;
+
+            posiciones = camino->search(cadena);
+
+            if (posiciones[0] == -1){
+                cout << "La cadena dada no contiene subcadenas que cumpan con la expresión regular";
+            } else {
+                cout << "La subcadena  "<< "\" "<< cadena.substr(posiciones[0], posiciones[1] - posiciones[0] + 2) <<"\"" <<
+                " cumple con la expresion regular " << "y se ubica en los indices " << posiciones[0] << " y " << posiciones[1] << endl;
+            }
+
+            pausa();
             break;
         
         case 3:
-         
+
+            cout << "Ingresa la cadena a analizar: ";
+            cin >> cadena;
+
+            cout << "Ingresa la cadena reemplazo: ";
+            cin >> reemplazo;
+
+            camino->replace(cadena, reemplazo);
+
+            cout << "Cadena resultado: " << cadena << endl;
+
+            pausa();
             break;
         
         case 4:
-         
+            cout << "Ingresa la cadena a analizar: ";
+            cin >> cadena;
+
+            cout << "Ingresa la cadena reemplazo: ";
+            cin >> reemplazo;
+
+            camino->replaceAll(cadena, reemplazo);
+
+            cout << "Cadena resultado: " << cadena << endl;
+
+            pausa();
             break;
         
         case 5:
-         
+            cout << camino->getAFN()->toString();
+
+            pausa();
             break;
         
         case 6:
-         
+            cout << camino->getAFD()->toString();
+            cout << "Nodos de aceptacion: ";
+
+            for(char c : camino->getAceptacion()){
+                cout << c << " ";
+            }
+
+            cout << endl;
+
+            pausa();
             break;
         
         case 7:
-         
+            desplegar_alfabeto(alfabeto);
+            camino = new tsregex(alfabeto, regex);
+
+            pausa();
             break;
         
         case 8:
-         
+            cout << "Ingresa la nueva regex: ";
+            cin >> regex;
+            camino = new tsregex(alfabeto, regex);
+
+            pausa();
             break;
         
         case 9:
-         
+            cout << "Ingresa tu nuevo nombre: ";
+            cin >> nombre;
+
+            pausa();
             break;
         
         case 10:
-         
+            system(LIMPIAR);
             break;
         
         default:
-
             break;
         }
 
 
     } while (opcion != 10);
-    
-    system("cls");
-    cout << ""
 
-    system("pause");
+    cout << "\n¡Vuelve pronto " << nombre << "!" << endl;
+    cout << "Atte. Tomato Stack 🍅";
+    cout << endl;
+
+    cin.ignore();
+    do {
+        cout << "\n¡Listo! Presiona cualquier tecla para salir...";
+   } while (cin.get() != '\n');
     return 0;
 }
 
@@ -141,7 +218,15 @@ void desplegar_alfabeto(string& alfabeto){
         break;
     
     default:
+        cout << "Opción inválida, se ha asignado el alfabeto de numeros y letras";
         alfabeto = tsregex :: ALL;
         break;
     }
+}
+
+void pausa () {
+    cin.ignore();
+    do {
+        cout << "\n¡Listo! Presiona cualquier tecla para regresar al menú...";
+   } while (cin.get() != '\n');
 }

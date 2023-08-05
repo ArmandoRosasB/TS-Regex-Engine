@@ -44,6 +44,8 @@ class tsregex {
         void replace(std::string&, std::string);
         void replaceAll(std::string&, std::string);
 
+        set<char> getAceptacion();
+
         WGraph<int, char>* getAFN();
         WGraph<char, char>* getAFD();
 
@@ -140,6 +142,10 @@ void tsregex :: replaceAll(std::string& cadena, std::string reemplazo) {
         pos = search(cadena, pos[0]+reemplazo.size());
     }
     
+}
+
+set<char> tsregex :: getAceptacion(){
+    return this->automata_finito_determinista->getAceptacion();
 }
 
 WGraph<int, char>* tsregex:: getAFN(){
