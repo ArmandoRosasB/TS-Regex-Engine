@@ -47,10 +47,10 @@ int main (int argc, char* argv[]){
         cout << "Regex: " << regex << endl << endl; 
         cout << "Selecciona alguna de las siguientes opciones..." << endl;
         
-        cout << "FUNCIONES\n\t1. match\n\t2. search\n\t3. replace\n\t4. replace all"<< endl;
-        cout << "\nAUTOMATAS\n\t5. Visualizar Automata Finito No Determinista\n\t6. Visualizar Automata Finito Determinista"<< endl;
-        cout << "\nCONFIGURACION\n\t7. Cambiar alfabeto\n\t8. Cambiar regex\n\t9. Cambiar mi nombre"<< endl;
-        cout << "\nSALIR\n\t10. Salir"<< endl;
+        cout << "🔹FUNCIONES🔹\n\t1. match\n\t2. search\n\t3. replace\n\t4. replace all"<< endl;
+        cout << "\n🔹AUTOMATAS🔹\n\t5. Visualizar Automata Finito No Determinista\n\t6. Visualizar Automata Finito Determinista"<< endl;
+        cout << "\n🔹CONFIGURACION🔹\n\t7. Cambiar alfabeto\n\t8. Cambiar regex\n\t9. Cambiar mi nombre"<< endl;
+        cout << "\n🔹SALIR🔹\n\t10. Salir"<< endl;
         
         cout << "Elige tu opcion " << nombre << ": ";
         cin >> opcion;
