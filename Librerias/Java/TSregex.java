@@ -14,6 +14,8 @@
 
 //package tsregex;
 
+import java.util.HashSet;
+
 public class TSregex {
     public final static String A_Z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public final static String MINUS_A_Z = "abcdefghijklmnopqrstuvwxyz";
@@ -22,6 +24,7 @@ public class TSregex {
     public final static String DIGITS = "0123456789";
     public final static String BIN = "01";
 
+    public final static String ALL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     private AFN automata_finito_no_determinista;
     private AFD automata_finito_determinista;
@@ -165,4 +168,6 @@ public class TSregex {
     public Wgraph<Character, Character> getAFD(){
         return automata_finito_determinista.getGrafo();
     }
+
+    public HashSet<Character> getAceptacion() { return automata_finito_determinista.getAceptacion(); }
 }

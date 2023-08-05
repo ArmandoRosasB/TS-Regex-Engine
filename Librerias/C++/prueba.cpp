@@ -4,7 +4,8 @@
 using namespace std;
 
 int main (int argc, char* argv[]){
-    AFN* prueba = new AFN("ab", "ab|ab*");
+    //AFN* prueba = new AFN("ab", "ab|ab*");
+    AFN* prueba = new AFN("tsregex", "((ts)+regex*)");
     AFD* prueba2 = new AFD(prueba);
     
     cout << "Ini: " << prueba->getInicio() << endl;

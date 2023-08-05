@@ -2,7 +2,7 @@
 
 public class Prueba {
     public static void main(String[] args) {
-        AFN prueba = new AFN("ab", "(ab)|(ab*)");
+        AFN prueba = new AFN("tsregex", "(ts)+((regex)*)");
         AFD prueba2 = new AFD(prueba);
 
         System.out.println("Ini:" + prueba.getInicio());
