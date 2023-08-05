@@ -112,6 +112,8 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
             automata_bloqueado = operandos.top();
         
         } else if (regex[i] == ')') {
+            int auxOrigen = nodo;
+
             while(operadores.top() != '(') {
 
                 operadores.pop();
@@ -140,10 +142,10 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
 
                 // Agregamos a la pila de operandos el nuevo autómata
                 operandos.push(automata(origen, destino));
+                ultimo_automata = automata(auxOrigen, destino);
             }
 
             operadores.pop();
-            ultimo_automata = automata(-1, -1);
             automata_bloqueado = automata(-1, -1);
             
         } else { // Caracter del alfabeto
