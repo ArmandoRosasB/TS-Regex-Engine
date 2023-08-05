@@ -79,7 +79,7 @@ int main (int argc, char* argv[]){
             if (posiciones[0] == -1){
                 cout << "La cadena dada no contiene subcadenas que cumpan con la expresión regular";
             } else {
-                cout << "La subcadena  "<< "\" "<< cadena.substr(posiciones[0], posiciones[1] - posiciones[0] + 2) <<"\"" <<
+                cout << "La subcadena  "<< "\" "<< cadena.substr(posiciones[0], posiciones[1] - posiciones[0] + 1) <<"\"" <<
                 " cumple con la expresion regular " << "y se ubica en los indices " << posiciones[0] << " y " << posiciones[1] << endl;
             }
 
