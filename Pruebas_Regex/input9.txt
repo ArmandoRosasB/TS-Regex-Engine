@@ -1,0 +1,2 @@
+tsregex
+(t+|s+)?re(ge)+x?

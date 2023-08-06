@@ -9,7 +9,6 @@ using namespace std;
 
 typedef pair<int, int> automata;
 
-char EPSILON = '$';
 automata ultimo_automata (-1, -1);
 automata automata_bloqueado(-1, -1);
 
@@ -41,11 +40,9 @@ int main(int argc, char* argv[]){
     // Creamos un grafo con costo para representar el Automata Finito No Determinista
     WGraph<int, char>* AFN = new WGraph<int, char>(true);
 
-    int nodo = 0;
     stack<char> operadores;
     stack<automata> operandos;
-
-
+    int nodo = 0, semaforo = 0, _origen;
 
     // ------------------------------- Autómata Finito No Determinista -------------------------------
     
@@ -53,7 +50,7 @@ int main(int argc, char* argv[]){
         
         if (regex[i] == '(') {
             operadores.push(regex[i]);
-
+            semaforo = 1;
         } else if (regex[i] == '*' || regex[i] == '?' || regex[i] == '+') {
             automata top = operandos.top();
             operandos.pop();
@@ -63,6 +60,8 @@ int main(int argc, char* argv[]){
 
             if (ultimo_automata == automata(-1, -1)) {
                 if (regex[i] == '*'){
+                    AFN->addEdge(top.second, nodo, EPSILON);
+
                     // Conectamos el 1er nodo con el nuevo nodo (0 veces)
                     AFN->addEdge(top.first, nodo, EPSILON);
 
@@ -71,6 +70,8 @@ int main(int argc, char* argv[]){
 
                 } 
                 else if (regex[i] == '?'){
+                    AFN->addEdge(top.second, nodo, EPSILON);
+                    
                     // Conectamos el 1er nodo con el nuevo nodo (0 veces)
                     AFN->addEdge(top.first, nodo, EPSILON);
 
@@ -81,16 +82,25 @@ int main(int argc, char* argv[]){
 
                 }
             } else {
+                
                 if (regex[i] == '*'){
+                    AFN->addEdge(ultimo_automata.second, nodo, EPSILON);
+
                     // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
                     AFN->addEdge(ultimo_automata.first, nodo, EPSILON);
 
                     // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
                     AFN->addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
+
+                    
                 }
                 else if (regex[i] == '?'){
+                    AFN->addEdge(ultimo_automata.second, nodo, EPSILON);
+
                     // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
                     AFN->addEdge(ultimo_automata.first, nodo, EPSILON);
+
+                    AFN->addEdge(ultimo_automata.second, nodo, EPSILON);
                 } 
                 else if (regex[i] == '+'){
                     // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
@@ -101,7 +111,7 @@ int main(int argc, char* argv[]){
 
             operandos.push(automata(top.first, nodo));
             nodo++;
-            
+                
         } else if (regex[i] == '|') {
             operadores.push('|');
             
@@ -109,7 +119,7 @@ int main(int argc, char* argv[]){
             automata_bloqueado = operandos.top();
         
         } else if (regex[i] == ')') {
-            int auxOrigen = nodo;
+            
             while(operadores.top() != '(') {
 
                 operadores.pop();
@@ -138,11 +148,12 @@ int main(int argc, char* argv[]){
 
                 // Agregamos a la pila de operandos el nuevo autómata
                 operandos.push(automata(origen, destino));
-                ultimo_automata = automata(auxOrigen, destino);
+                _origen = origen;
             }
-
+            
             operadores.pop();
             automata_bloqueado = automata(-1, -1);
+            ultimo_automata = automata(_origen, operandos.top().second);
             
         } else { // Caracter del alfabeto
             // Creamos su autómata
@@ -150,6 +161,11 @@ int main(int argc, char* argv[]){
 
             // Indicamos que es el ultimo automata
             ultimo_automata = automata(nodo, nodo+1);
+
+            if(semaforo == 1) {
+                semaforo++;
+                _origen = nodo;
+            }
             
             // Verificar si podemos concatenar autómatas
             if (!operandos.empty() && operandos.top() != automata_bloqueado) {
@@ -161,6 +177,11 @@ int main(int argc, char* argv[]){
 
                 operandos.push(automata(top.first, ultimo_automata.second)); 
                 ultimo_automata.first = top.second; 
+
+                if(semaforo == 3) { 
+                    _origen--;
+                } 
+                semaforo++;
 
             } else {
                 operandos.push(automata(nodo, nodo + 1));
