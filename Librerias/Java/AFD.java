@@ -1,4 +1,17 @@
 //package tsregex;
+// =================================================================
+//
+// Archivo: AFD.java
+// Autores: José Armando Rosas Balderas
+//          Ramona Nájera Fuentes
+// Descripción: Este archivo es una librería que contiene la 
+//              construcción de un automata finito determinista
+//              representado con un grafo con costo.
+//
+// Copyright© 2023 by TomatoStack.
+//
+// =================================================================
+
 
 import java.util.Iterator;
 import java.util.HashMap;

@@ -44,11 +44,12 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
     grafo = new WGraph<int, char>(true);
     this->alfabeto = alfabeto;
 
-    int nodo = 0;
     stack<char> operadores;
     stack<automata> operandos;
+    int nodo = 0, semaforo = 0, _origen;
     automata ultimo_automata (-1, -1);
     automata automata_bloqueado(-1, -1);
+    
 
     // ------------------------------- Autómata Finito No Determinista -------------------------------
     
@@ -56,16 +57,20 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
         
         if (regex[i] == '(') {
             operadores.push(regex[i]);
+            semaforo = 1;
 
+            if(!operandos.empty()) {
+                automata_bloqueado = operandos.top();
+            }
         } else if (regex[i] == '*' || regex[i] == '?' || regex[i] == '+') {
             automata top = operandos.top();
             operandos.pop();
 
-            // Agregamos un nodo de aceptación
-            grafo->addEdge(top.second, nodo, EPSILON);
-
             if (ultimo_automata == automata(-1, -1)) {
                 if (regex[i] == '*'){
+                    // Agregamos un nodo de aceptación
+                    grafo->addEdge(top.second, nodo, EPSILON);
+
                     // Conectamos el 1er nodo con el nuevo nodo (0 veces)
                     grafo->addEdge(top.first, nodo, EPSILON);
 
@@ -74,17 +79,26 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
 
                 } 
                 else if (regex[i] == '?'){
+                    // Agregamos un nodo de aceptación
+                    grafo->addEdge(top.second, nodo, EPSILON);
+
                     // Conectamos el 1er nodo con el nuevo nodo (0 veces)
                     grafo->addEdge(top.first, nodo, EPSILON);
 
                 } 
                 else if (regex[i] == '+'){
+                    // Agregamos un nodo de aceptación
+                    grafo->addEdge(top.second, nodo, EPSILON);
+
                     //Conectamos el último nodo con el primero (1...* veces)
                     grafo->addEdge(top.second, top.first, EPSILON);
 
                 }
             } else {
                 if (regex[i] == '*'){
+                    // Agregamos un nodo de aceptación
+                    grafo->addEdge(ultimo_automata.second, nodo, EPSILON);
+
                     // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
                     grafo->addEdge(ultimo_automata.first, nodo, EPSILON);
 
@@ -92,10 +106,16 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
                     grafo->addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
                 }
                 else if (regex[i] == '?'){
+                    // Agregamos un nodo de aceptación
+                    grafo->addEdge(ultimo_automata.second, nodo, EPSILON);
+
                     // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
                     grafo->addEdge(ultimo_automata.first, nodo, EPSILON);
                 } 
                 else if (regex[i] == '+'){
+                    // Agregamos un nodo de aceptación
+                    grafo->addEdge(ultimo_automata.second, nodo, EPSILON);
+                    
                     // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
                     grafo->addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
                 }
@@ -112,7 +132,6 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
             automata_bloqueado = operandos.top();
         
         } else if (regex[i] == ')') {
-            int auxOrigen = nodo;
 
             while(operadores.top() != '(') {
 
@@ -142,11 +161,27 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
 
                 // Agregamos a la pila de operandos el nuevo autómata
                 operandos.push(automata(origen, destino));
-                ultimo_automata = automata(auxOrigen, destino);
+                _origen = origen;
             }
 
             operadores.pop();
             automata_bloqueado = automata(-1, -1);
+            ultimo_automata = automata(_origen, operandos.top().second);
+
+            // Verificar si podemos concatenar autómatas
+            while (operandos.size() > 1) {
+                automata second = operandos.top();
+                operandos.pop();
+
+                automata first = operandos.top();
+                operandos.pop();
+
+                grafo->addEdge(first.second, second.first, EPSILON);
+
+                operandos.push(automata(first.first, second.second)); 
+            }
+            
+            //ultimo_automata = automata(-1, -1);
             
         } else { // Caracter del alfabeto
             // Creamos su autómata
@@ -154,6 +189,11 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
 
             // Indicamos que es el ultimo automata
             ultimo_automata = automata(nodo, nodo+1);
+
+            if(semaforo == 1) {
+                semaforo++;
+                _origen = nodo;
+            }
             
             // Verificar si podemos concatenar autómatas
             if (!operandos.empty() && operandos.top() != automata_bloqueado) {
@@ -166,6 +206,11 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
                 operandos.push(automata(top.first, ultimo_automata.second)); 
                 ultimo_automata.first = top.second; 
 
+                if(semaforo == 3) { 
+                    _origen--;
+                } 
+                semaforo++;
+
             } else {
                 operandos.push(automata(nodo, nodo + 1));
             } 
@@ -174,7 +219,7 @@ AFN :: AFN(std::string alfabeto, std:: string regex){
         }
     }
 
-    while(!operadores.empty()) {
+    while(!operadores.empty() && operadores.size() > 1) {
         operadores.pop();
         int origen, destino;
 

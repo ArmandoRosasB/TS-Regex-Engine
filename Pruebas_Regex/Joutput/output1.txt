@@ -22,4 +22,3 @@ C	(B, a)	(C, b)
 
 Nodos de aceptación
 A B C 
-

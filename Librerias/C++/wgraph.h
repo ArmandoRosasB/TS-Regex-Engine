@@ -115,13 +115,21 @@ template<class Vertex, class Edge>
 string WGraph<Vertex, Edge>::toString() const{
     stringstream aux;
 
+    set<pair<Vertex, Edge>> repetidos;
+
 	typename set<Vertex>::iterator i;
 	typename map<Vertex, Edge>::const_iterator j;
+    typename set<pair<Vertex, Edge>>::iterator k;
 
 	for(i = vertexes.begin(); i != vertexes.end(); i++) {
 	    aux << (*i) << "\t";
+        repetidos.clear();
+
 	 	for(j = edges.at((*i)).begin(); j != edges.at((*i)).end(); j++) {
-	 		aux << "(" << j->first << "," << j->second << ")\t";
+            if (repetidos.find(pair<Vertex, Edge>(j->first, j->second)) == repetidos.end()){
+	 		    aux << "(" << j->first << "," << j->second << ")\t";
+            }
+            repetidos.insert(pair<Vertex, Edge>(j->first, j->second));
 	 	}
 	 	aux << "\n";
 	}
