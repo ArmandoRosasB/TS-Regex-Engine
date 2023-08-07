@@ -42,7 +42,7 @@ public class Main {
         // Creamos un grafo con costo para representar el Automata Finito No Determinista
         Wgraph<Integer, Character> AFN = new Wgraph<Integer, Character>(true);
 
-        int nodo = 0;
+        int nodo = 0, semaforo = 0, _origen = 0;
         Stack<Character> operadores = new Stack<Character>();
         Stack<Automata<Integer, Integer>> operandos = new Stack<Automata<Integer, Integer>>();
 
@@ -51,15 +51,20 @@ public class Main {
         for(int i = 0; i < regex.length(); i++){
             if (regex.charAt(i) == '(') {
                 operadores.push(regex.charAt(i));
+                semaforo = 1;
+
+                if(!operandos.isEmpty()) {
+                    automata_bloqueado = operandos.peek();
+                }
 
             } else if (regex.charAt(i) == '*' || regex.charAt(i) == '?' || regex.charAt(i) == '+') {
                 Automata<Integer, Integer> top = operandos.pop();
 
-                // Agregamos un nodo de aceptación
-                AFN.addEdge(top.second, nodo, EPSILON);
-
                 if (ultimo_automata.equals(new Automata<Integer, Integer>(-1, -1))) {
                     if (regex.charAt(i) == '*'){
+                        // Agregamos un nodo de aceptación
+                        AFN.addEdge(top.second, nodo, EPSILON);
+
                         // Conectamos el 1er nodo con el nuevo nodo (0 veces)
                         AFN.addEdge(top.first, nodo, EPSILON);
 
@@ -68,17 +73,26 @@ public class Main {
 
                     } 
                     else if (regex.charAt(i) == '?'){
+                        // Agregamos un nodo de aceptación
+                        AFN.addEdge(top.second, nodo, EPSILON);
+
                         // Conectamos el 1er nodo con el nuevo nodo (0 veces)
                         AFN.addEdge(top.first, nodo, EPSILON);
 
                     } 
                     else if (regex.charAt(i) == '+'){
+                        // Agregamos un nodo de aceptación
+                        AFN.addEdge(top.second, nodo, EPSILON);
+
                         //Conectamos el último nodo con el primero (1...* veces)
                         AFN.addEdge(top.second, top.first, EPSILON);
 
                     }
                 } else {
                     if (regex.charAt(i) == '*'){
+                        // Agregamos un nodo de aceptación
+                        AFN.addEdge(ultimo_automata.second, nodo, EPSILON);
+
                         // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
                         AFN.addEdge(ultimo_automata.first, nodo, EPSILON);
 
@@ -86,16 +100,23 @@ public class Main {
                         AFN.addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
                     }
                     else if (regex.charAt(i) == '?'){
+                        // Agregamos un nodo de aceptación
+                        AFN.addEdge(ultimo_automata.second, nodo, EPSILON);
+
                         // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
                         AFN.addEdge(ultimo_automata.first, nodo, EPSILON);
+
                     } 
                     else if (regex.charAt(i) == '+'){
+                        // Agregamos un nodo de aceptación
+                        AFN.addEdge(ultimo_automata.second, nodo, EPSILON);
+
                         // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
                         AFN.addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
                     }
                     ultimo_automata = new Automata<Integer, Integer>(-1, -1);
                 }
-
+                
                 operandos.push(new Automata<Integer, Integer>(top.first, nodo));
                 nodo++;
                 
@@ -106,7 +127,6 @@ public class Main {
                 automata_bloqueado = operandos.peek();
             
             } else if (regex.charAt(i) == ')') {
-                int auxOrigen = nodo;
 
                 while(operadores.pop() != '(') {
                     int origen, destino;
@@ -132,10 +152,21 @@ public class Main {
 
                     // Agregamos a la pila de operandos el nuevo autómata
                     operandos.push(new Automata<Integer, Integer>(origen, destino));
-                    ultimo_automata = new Automata<Integer, Integer>(auxOrigen, destino);
+                    _origen = origen;
                 }
                 
                 automata_bloqueado = new Automata<Integer, Integer>(-1, -1);
+                ultimo_automata = new Automata<Integer,Integer>(_origen, operandos.peek().second);
+
+                // Verificar si podemos concatenar autómatas
+                while (operandos.size() > 1) {
+                    Automata<Integer, Integer> second = operandos.pop();
+                    Automata<Integer, Integer> first = operandos.pop();
+
+                    AFN.addEdge(first.second, second.first, EPSILON);
+
+                    operandos.push(new Automata<Integer, Integer>(first.first, second.second)); 
+                }
                 
             } else { // Caracter del alfabeto
                 // Creamos su autómata
@@ -143,6 +174,11 @@ public class Main {
 
                 // Indicamos que es el ultimo automata
                 ultimo_automata = new Automata<Integer, Integer>(nodo, nodo+1);
+
+                if (semaforo == 1){
+                    semaforo++;
+                    _origen = nodo;
+                }
                 
                 // Verificar si podemos concatenar autómatas
                 if (!operandos.isEmpty() && operandos.peek() != automata_bloqueado) {
@@ -154,6 +190,11 @@ public class Main {
                     operandos.push(new Automata<Integer, Integer>(top.first, ultimo_automata.second)); 
                     ultimo_automata.first = top.second; 
 
+                    if (semaforo == 3){
+                        _origen--;
+                    }
+                    semaforo++;
+
                 } else {
                     operandos.push(new Automata<Integer, Integer>(nodo, nodo + 1));
                 } 
@@ -163,7 +204,7 @@ public class Main {
 
         }
 
-        while(!operadores.isEmpty()) {
+        while(operandos.size() > 1 && !operadores.isEmpty()) {
             operadores.pop();
             int origen, destino;
 

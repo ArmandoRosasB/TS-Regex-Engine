@@ -1,24 +1,22 @@
 ----- Automata Finito No Determinista -----
 0	(1,a)	
 1	(3,b)	
-3	(10,$)	
+3	(4,$)	
 4	(5,a)	
 5	(7,b)	(8,$)	
 7	(5,$)	(8,$)	
 8	(10,$)	
-9	(0,$)	(4,$)	
-10	(11,$)	
-11	(13,$)	
-12	(9,$)	
-13	
+9	(0,$)	
+10	
 
 
 
 ----- Automata Finito Determinista -----
 A	(B,a)	
 B	(C,b)	
-C	(D,b)	
-D	(D,b)	
+C	(D,a)	
+D	(E,b)	
+E	(E,b)	
 
 Nodos de aceptación
-B C D 
+D E 

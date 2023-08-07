@@ -67,12 +67,20 @@ public class MultiMap <Key, Value> {
 
     public final String toStringValues() {
         String result = "";
-
+        HashSet<Automata<Key, Value>> repetidos = new HashSet<Automata<Key, Value>>();
+        
         for(Key k: mymap.keySet()) {
             for(Value v: mymap.get(k)) {
-                result += "(" + k + ", " + v + ")\t";
+                if (!repetidos.contains(new Automata<Key, Value>(k, v))){
+                    result += "(" + k + ", " + v + ")\t";
+                }
+                
+                repetidos.add(new Automata<Key, Value>(k, v));
             }
+
+            repetidos.clear();
         }
+        
         return result;
     }
 } 

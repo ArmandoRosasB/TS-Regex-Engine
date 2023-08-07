@@ -51,13 +51,14 @@ int main(int argc, char* argv[]){
         if (regex[i] == '(') {
             operadores.push(regex[i]);
             semaforo = 1;
+
+            if(!operandos.empty()) {
+                automata_bloqueado = operandos.top();
+            }
         } else if (regex[i] == '*' || regex[i] == '?' || regex[i] == '+') {
             automata top = operandos.top();
             operandos.pop();
-
-            // Agregamos un nodo de aceptación
-            AFN->addEdge(top.second, nodo, EPSILON);
-
+    
             if (ultimo_automata == automata(-1, -1)) {
                 if (regex[i] == '*'){
                     AFN->addEdge(top.second, nodo, EPSILON);
@@ -77,6 +78,9 @@ int main(int argc, char* argv[]){
 
                 } 
                 else if (regex[i] == '+'){
+                    // Agregamos un nodo de aceptación
+                    AFN->addEdge(top.second, nodo, EPSILON);
+
                     //Conectamos el último nodo con el primero (1...* veces)
                     AFN->addEdge(top.second, top.first, EPSILON);
 
@@ -100,9 +104,11 @@ int main(int argc, char* argv[]){
                     // Conectamos el inicio del ultimo_automata con el nuevo nodo (0 veces)
                     AFN->addEdge(ultimo_automata.first, nodo, EPSILON);
 
-                    AFN->addEdge(ultimo_automata.second, nodo, EPSILON);
                 } 
                 else if (regex[i] == '+'){
+                    // Agregamos un nodo de aceptación
+                    AFN->addEdge(ultimo_automata.second, nodo, EPSILON);
+
                     // Conectamos el final del ultimo automata con el inicio del ultimo_automata (1...* veces)
                     AFN->addEdge(ultimo_automata.second, ultimo_automata.first, EPSILON);
                 }
@@ -149,11 +155,26 @@ int main(int argc, char* argv[]){
                 // Agregamos a la pila de operandos el nuevo autómata
                 operandos.push(automata(origen, destino));
                 _origen = origen;
+
             }
             
             operadores.pop();
             automata_bloqueado = automata(-1, -1);
             ultimo_automata = automata(_origen, operandos.top().second);
+
+            // Verificar si podemos concatenar autómatas
+            while (operandos.size() > 1) {
+                automata second = operandos.top();
+                operandos.pop();
+
+                automata first = operandos.top();
+                operandos.pop();
+
+                AFN->addEdge(first.second, second.first, EPSILON);
+
+                operandos.push(automata(first.first, second.second)); 
+            }
+            //ultimo_automata = automata(-1, -1);
             
         } else { // Caracter del alfabeto
             // Creamos su autómata
@@ -191,7 +212,7 @@ int main(int argc, char* argv[]){
         }
     }
 
-    while(!operadores.empty()) {
+    while(!operadores.empty() && operadores.size() > 1) {
         operadores.pop();
         int origen, destino;
 
