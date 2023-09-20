@@ -8,7 +8,7 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static String alfabeto = "";
     private static String regex = "";
-    private static TSregex tsregex;
+    public static TSregex tsregex;
 
     public static void main(String[] args) throws IOException {
         String nombre = "", line = "", cadena = "", reemplazo = "";
